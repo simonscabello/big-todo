@@ -45,11 +45,11 @@ class ProjectController extends Controller
     }
 
     /**
- * Display the specified resource.
- *
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
     public function show($id)
     {
         //
@@ -64,7 +64,7 @@ class ProjectController extends Controller
     public function edit(int $id): View|RedirectResponse
     {
         $project = Project::find($id);
-        if(!$project) {
+        if (!$project) {
             toast('Project not found', 'error');
             return redirect()->route('project.index');
         }
