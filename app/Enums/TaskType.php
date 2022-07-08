@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum TaskType: string
 {
-    case FEATURE = 'feature';
-    case BUGFIX  = 'bugfix';
-    case HOTFIX  = 'hotfix';
-    case CHORE   = 'chore';
+    case Feature = 'feature';
+    case Bugfix  = 'bugfix';
+    case Hotfix  = 'hotfix';
+    case Chore   = 'chore';
 }

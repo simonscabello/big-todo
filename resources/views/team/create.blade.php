@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Projects</h1>
+                    <h1>Teams</h1>
                 </div>
                 <div class="col-sm-6">
                     <a href="{{url()->previous()}}" class="btn btn-default float-right">
@@ -18,11 +18,11 @@
     </section>
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Create a new project</h3>
+            <h3 class="card-title">Create a new team</h3>
         </div>
 
         <div class="card-body">
-            <form method="post" action="{{route('project.store')}}">
+            <form method="post" action="{{route('team.store')}}">
                 @csrf
                 <div class="card-body">
                     <div class="form-group col-lg-4">
@@ -36,26 +36,10 @@
                     </div>
                     <div class="form-group col-lg-4">
                         <label for="description">Description*</label>
-                        <textarea rows="4" type="text" class="form-control" id="description" name="description">{{old('description')}}</textarea>
+                        <textarea rows="4" type="password" class="form-control" id="description" name="description" value="{{old('description')}}">
+
+                        </textarea>
                         @error('description')
-                        <div class="text-danger">
-                            <small>{{$message}}</small>
-                        </div>
-                        @enderror
-                    </div>
-                    <div class="form-group col-lg-4">
-                        <label for="repository_link">Repository Link</label>
-                        <input type="text" class="form-control" id="repository_link" name="repository_link" value="{{old('repository_link')}}">
-                        @error('repository_link')
-                        <div class="text-danger">
-                            <small>{{$message}}</small>
-                        </div>
-                        @enderror
-                    </div>
-                    <div class="form-group col-lg-4">
-                        <label for="color">Color*</label>
-                        <input name="color" id="color" type="color" value="{{old('color')}}" class="form-control">
-                        @error('color')
                         <div class="text-danger">
                             <small>{{$message}}</small>
                         </div>

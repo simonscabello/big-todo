@@ -5,10 +5,10 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Projects</h1>
+                    <h1>Teams</h1>
                 </div>
                 <div class="col-sm-6">
-                    <button form="deleteForm" onclick="deleteProject()" type="submit" class="btn btn-danger float-right">
+                    <button form="deleteForm" onclick="deleteTeam()" type="submit" class="btn btn-danger float-right">
                         <i class="fas fa-trash"></i>
                         Delete
                     </button>
@@ -18,7 +18,7 @@
                         Back
                     </a>
 
-                    <form id="deleteForm" class="hidden" action="{{route('project.destroy', ['project' => $project->id])}}" method="post">
+                    <form id="deleteForm" class="hidden" action="{{route('team.destroy', ['team' => $team->id])}}" method="post">
                         @csrf
                         @method('DELETE')
                     </form>
@@ -28,17 +28,17 @@
     </section>
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Update project {{$project->name}}</h3>
+            <h3 class="card-title">Update project {{$team->name}}</h3>
         </div>
 
         <div class="card-body">
-            <form method="post" action="{{route('project.update', ['project' => $project->id])}}">
+            <form method="post" action="{{route('team.update', ['team' => $team->id])}}">
                 @csrf
                 @method('PUT')
                 <div class="card-body">
                     <div class="form-group col-lg-4">
                         <label for="name">Name*</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{$project->name ?? old('name')}}">
+                        <input type="text" class="form-control" id="name" name="name" value="{{$team->name ?? old('name')}}">
                         @error('name')
                         <div class="text-danger">
                             <small>{{$message}}</small>
@@ -47,26 +47,10 @@
                     </div>
                     <div class="form-group col-lg-4">
                         <label for="description">Description*</label>
-                        <textarea rows="4" type="password" class="form-control" id="description" name="description">{{$project->description ?? old('description')}}</textarea>
+                        <textarea rows="4" type="password" class="form-control" id="description" name="description">
+                            {{$team->description ?? old('description')}}
+                        </textarea>
                         @error('description')
-                        <div class="text-danger">
-                            <small>{{$message}}</small>
-                        </div>
-                        @enderror
-                    </div>
-                    <div class="form-group col-lg-4">
-                        <label for="repository_link">Repository Link</label>
-                        <input type="text" class="form-control" id="repository_link" name="repository_link" value="{{$project->repository_link ??old('repository_link')}}">
-                        @error('repository_link')
-                        <div class="text-danger">
-                            <small>{{$message}}</small>
-                        </div>
-                        @enderror
-                    </div>
-                    <div class="form-group col-lg-4">
-                        <label for="color">Color*</label>
-                        <input name="color" id="color" type="color" value="{{$project->color ?? old('color')}}" class="form-control">
-                        @error('color')
                         <div class="text-danger">
                             <small>{{$message}}</small>
                         </div>
@@ -85,13 +69,13 @@
 
 @section('third_party_scripts')
     <script>
-        function deleteProject() {
+        function deleteTeam() {
             event.preventDefault();
             Swal.fire({
                 showCloseButton: true,
                 showCancelButton: true,
                 title: 'Warning!',
-                text: 'Do you want to delete this project?',
+                text: 'Do you want to delete this team?',
                 icon: 'warning',
                 confirmButtonText: 'Yes',
                 cancelButtonText: 'Cancel',

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->string('color');
+            $table->text('repository_link')->nullable();
             $table->timestamps();
         });
     }

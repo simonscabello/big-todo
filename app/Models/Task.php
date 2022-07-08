@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @method static orderBy(string $string, string $string1)
+ * @method static create(array $all)
+ * @property TaskState $status
+ */
 class Task extends Model
 {
     protected $fillable = [
@@ -43,5 +48,21 @@ class Task extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    public function getLastStatus()
+    {
+        $lastHistoric =  $this->historics()->orderBy('created_at', 'desc')->first();
+
+        if ($lastHistoric) {
+            return $lastHistoric->previus_status;
+        }
+
+        return $this->status;
     }
 }

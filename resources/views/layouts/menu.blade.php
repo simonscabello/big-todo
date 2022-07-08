@@ -11,4 +11,16 @@
         <p>Projects</p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ route('team.index') }}" class="nav-link {{ Route::is('team.*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-people-arrows"></i>
+        <p>Teams</p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ route('task.index') }}" class="nav-link {{ Route::is('task.*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-tasks"></i>
+        <p>Tasks</p>
+    </a>
+</li>
 

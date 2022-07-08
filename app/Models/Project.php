@@ -17,6 +17,7 @@ class Project extends Model
         'name',
         'description',
         'color',
+        'repository_link',
     ];
 
     public function tasks(): HasMany
