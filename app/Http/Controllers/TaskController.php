@@ -69,7 +69,7 @@ class TaskController extends Controller
             'previous_status' => $task->getLastStatus(),
         ];
 
-        TaskHistoric::create($data);
+        $task->historics()->create($data);
 
         toast('Task registered', 'success');
 
