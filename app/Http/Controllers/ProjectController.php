@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
+use App\Services\ProjectService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ProjectController extends Controller
 {
+    public function __construct(protected ProjectService $projectService)
+    {}
+
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +20,7 @@ class ProjectController extends Controller
      */
     public function index(): View
     {
-        return view('project/index', ['projects' => Project::orderBy('created_at', 'DESC')->get()]);
+        return view('project/index', ['projects' => $this->projectService->getAllOrderedBy('created_at', 'DESC')]);
     }
 
     /**
@@ -37,7 +41,7 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request): RedirectResponse
     {
-        Project::create($request->all());
+        $this->projectService->store($request->all());
 
         toast('Project registered', 'success');
 
@@ -63,7 +67,7 @@ class ProjectController extends Controller
      */
     public function edit(int $id): View|RedirectResponse
     {
-        $project = Project::find($id);
+        $project = $this->projectService->find($id);
         if (!$project) {
             toast('Project not found', 'error');
             return redirect()->route('project.index');
@@ -81,7 +85,11 @@ class ProjectController extends Controller
      */
     public function update(ProjectRequest $request, int $id): RedirectResponse
     {
-        Project::find($id)->update($request->all());
+        $project = $this->projectService->update($request->except(['_method', '_token']), $id);
+        if (!$project) {
+            toast('Error updating project', 'error');
+            return back();
+        }
 
         toast('Project updated', 'success');
 
@@ -96,7 +104,7 @@ class ProjectController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        Project::find($id)->delete();
+        $this->projectService->destroy($id);
 
         toast('Project deleted', 'success');
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TeamRequest;
 use App\Models\Team;
+use App\Services\TeamService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -11,6 +13,9 @@ use Illuminate\View\View;
 
 class TeamController extends Controller
 {
+    public function __construct(protected TeamService $teamService)
+    {}
+
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +23,7 @@ class TeamController extends Controller
      */
     public function index(): View
     {
-        return view('team/index', ['teams' => Team::orderBy('created_at', 'DESC')->get()]);
+        return view('team/index', ['teams' => $this->teamService->getAllOrderedBy('created_at', 'DESC')]);
     }
 
     /**
@@ -34,12 +39,12 @@ class TeamController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param TeamRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(TeamRequest $request): RedirectResponse
     {
-        Team::create($request->all());
+        $this->teamService->store($request->all());
 
         toast('Team registered', 'success');
 
@@ -65,7 +70,7 @@ class TeamController extends Controller
      */
     public function edit(int $id): View|RedirectResponse
     {
-        $team = Team::find($id);
+        $team = $this->teamService->find($id);
         if (!$team) {
             toast('Team not found', 'error');
             return redirect()->route('team.index');
@@ -77,17 +82,21 @@ class TeamController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param  int  $id
+     * @param TeamRequest $request
+     * @param int $id
      * @return RedirectResponse
      */
-    public function update(Request $request, int $id): RedirectResponse
+    public function update(TeamRequest $request, int $id): RedirectResponse
     {
-        Team::find($id)->update($request->all());
+        $team = $this->teamService->update($request->except(['_method', '_token']), $id);
+        if (!$team) {
+            toast('Error updating team', 'error');
+            return back();
+        }
 
         toast('Team updated', 'success');
 
-        return redirect()->route('project.index');
+        return redirect()->route('team.index');
     }
 
     /**
@@ -98,7 +107,7 @@ class TeamController extends Controller
      */
     public function destroy(int $id): RedirectResponse
     {
-        Team::find($id)->delete();
+        $this->teamService->destroy($id);
 
         toast('Team deleted', 'success');
 

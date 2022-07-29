@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @method static orderBy(string $string, string $string1)
  * @method static create(array $all)
+ * @method find(int $id)
+ * @method whereId(int $id)
  * @property TaskState $status
  */
 class Task extends Model
@@ -53,16 +55,5 @@ class Task extends Model
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
-    }
-
-    public function getLastStatus()
-    {
-        $lastHistoric =  $this->historics()->orderBy('created_at', 'desc')->first();
-
-        if ($lastHistoric) {
-            return $lastHistoric->previus_status;
-        }
-
-        return $this->status;
     }
 }

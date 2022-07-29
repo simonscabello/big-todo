@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(Task::class);
             $table->foreignIdFor(User::class);
             $table->string('current_status');
-            $table->string('previous_status');
+            $table->string('previous_status')->nullable();
             $table->timestamps();
         });
     }

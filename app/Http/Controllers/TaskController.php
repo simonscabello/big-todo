@@ -2,21 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\TaskPriority;
-use App\Enums\TaskState;
-use App\Enums\TaskType;
-use App\Models\Project;
 use App\Models\Task;
-use App\Models\TaskHistoric;
 use App\Models\Team;
+use App\Services\EnumService;
+use App\Services\ProjectService;
+use App\Services\TaskService;
+use App\Services\TeamService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
+    public function __construct(
+        protected ProjectService $projectService,
+        protected EnumService $enumService,
+        protected TeamService $teamService,
+        protected TaskService $taskService
+    )
+    {}
+
     /**
      * Display a listing of the resource.
      *
@@ -34,11 +40,11 @@ class TaskController extends Controller
      */
     public function create(): View
     {
-        $projects = Project::all();
-        $teams = Team::all();
-        $types = TaskType::cases();
-        $priorities = TaskPriority::cases();
-        $statuses = TaskState::cases();
+        $projects = $this->projectService->getAllOrderedBy();
+        $teams = $this->teamService->getAllOrderedBy();
+        $types = $this->enumService->taskTypes();
+        $priorities = $this->enumService->taskPriorities();
+        $statuses = $this->enumService->taskStates();
 
         return view('task.create', [
             'projects' => $projects,
@@ -57,19 +63,13 @@ class TaskController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $author = auth()->user()->id;
-        $request['author_id'] = $author;
+        $request['author_id'] = auth()->user()->id;
 
-        $task = Task::create($request->all());
-
-        $data = [
-            'task_id' => $task->id,
-            'user_id' => $author,
-            'current_status' => $task->status,
-            'previous_status' => $task->getLastStatus(),
-        ];
-
-        $task->historics()->create($data);
+        $task = $this->taskService->store($request->except(['_token', '_method']));
+        if (!$task) {
+            toast('Error creating task', 'error');
+            return back();
+        }
 
         toast('Task registered', 'success');
 
@@ -91,33 +91,66 @@ class TaskController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return RedirectResponse
      */
-    public function edit($id)
+    public function edit(int $id): \Illuminate\View\View|RedirectResponse
     {
-        //
+        $task = $this->taskService->find($id, ['project', 'team', 'historics']);
+        if(!$task) {
+            toast('Task not found', 'error');
+            return redirect()->route('task.index');
+        }
+
+        $teams = $this->teamService->getAllOrderedBy();
+        $projects = $this->projectService->getAllOrderedBy();
+        $types = $this->enumService->taskTypes();
+        $priorities = $this->enumService->taskPriorities();
+        $statuses = $this->enumService->taskStates();
+
+        return view('task.edit', [
+            'task' => $task,
+            'teams' => $teams,
+            'projects' => $projects,
+            'types' => $types,
+            'priorities' => $priorities,
+            'statuses' => $statuses,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param  int  $id
-     * @return Response
+     * @param int $id
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
-        //
+        $request['author_id'] = auth()->user()->id;
+
+        $task = $this->taskService->update($request->except(['_token', '_method']), $id);
+        if (!$task) {
+            toast('Error updating task', 'error');
+            return back();
+        }
+
+        toast('Task updated', 'success');
+
+        return redirect()->route('task.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return Response
+     * @param int $id
+     * @return RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
-        //
+        $this->teamService->destroy($id);
+
+        toast('Task deleted', 'success');
+
+        return redirect()->route('task.index');
     }
 }

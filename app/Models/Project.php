@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static create(array $all)
  * @method static find(int $id)
  * @method static orderBy(string $string, string $string1)
+ * @method whereId($id)
  */
 class Project extends Model
 {

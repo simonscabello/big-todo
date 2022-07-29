@@ -47,9 +47,7 @@
                     </div>
                     <div class="form-group col-lg-4">
                         <label for="description">Description*</label>
-                        <textarea rows="4" type="password" class="form-control" id="description" name="description">
-                            {{$team->description ?? old('description')}}
-                        </textarea>
+                        <textarea rows="4" type="password" class="form-control" id="description" name="description">{{$team->description ?? old('description')}}</textarea>
                         @error('description')
                         <div class="text-danger">
                             <small>{{$message}}</small>
