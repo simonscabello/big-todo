@@ -35,7 +35,7 @@
                     <td>{{$task->id}}</td>
                     <td>{{$task->title}}</td>
                     <td>{{$task->description}}</td>
-                    <td>{{$task->deadline}}</td>
+                    <td>{{date('d/m/Y', strtotime($task->deadline))}}</td>
                     <td>
                         <a class="btn btn-primary" href="{{route('task.edit', ['task' => $task->id])}}">
                             <i class="fas fa-pen"></i>
